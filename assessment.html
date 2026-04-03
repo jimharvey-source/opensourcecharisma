@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charisma Quadrant Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0f1f38;--navy-mid:#1a3357;--teal:#1a7a6e;--gold:#c9a84c;--gold-pale:#f5efd8;--off-white:#f8f6f1;--white:#ffffff;--text:#1a1a2e;--muted:#6b7280;--border:#ddd8ce;--conf:#1a3357;--soc:#1a7a6e}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;line-height:1.6}
+#progress-bar{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.15);z-index:100}
+#progress-fill{height:100%;background:var(--gold);width:0%;transition:width 0.4s ease}
+
+/* SCREENS — only one visible at a time */
+.screen{display:none}
+.screen.active{display:block}
+#screen-intro.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#screen-email.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+#screen-intro{min-height:100vh;background:var(--navy);padding-top:112px!important;padding:60px 24px;position:relative;overflow:hidden}
+#screen-intro::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,#1e3d6e 0%,transparent 70%);pointer-events:none}
+.intro-badge{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.4);padding:6px 16px;border-radius:2px;margin-bottom:40px}
+.intro-title{font-family:'Playfair Display',serif;font-size:clamp(38px,7vw,72px);font-weight:700;color:var(--white);text-align:center;line-height:1.1;max-width:800px;margin-bottom:16px}
+.intro-title span{color:var(--gold)}
+.intro-subtitle{font-size:17px;color:rgba(255,255,255,0.6);text-align:center;max-width:520px;margin-bottom:56px;font-weight:300;line-height:1.7}
+.intro-meta{display:flex;gap:40px;margin-bottom:56px;flex-wrap:wrap;justify-content:center}
+.intro-meta-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.intro-meta-item strong{font-size:22px;color:var(--white);font-weight:600}
+.intro-meta-item span{font-size:12px;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase}
+.btn-primary{background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;border:none;padding:18px 52px;cursor:pointer;border-radius:2px;transition:all 0.2s}
+.btn-primary:hover{background:#d4b060;transform:translateY(-1px)}
+.intro-note{margin-top:24px;font-size:13px;color:rgba(255,255,255,0.3);text-align:center}
+.intro-book-row{display:flex;align-items:center;gap:16px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+.btn-book-link{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;padding:10px 20px;border-radius:2px;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.btn-book-link:hover{border-color:var(--gold);color:var(--gold)}
+.btn-book-link span{font-size:15px}
+.btn-book-about{background:transparent;border:none;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0}
+.btn-book-about:hover{color:rgba(255,255,255,0.7)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--white);border-radius:4px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-header{background:var(--navy);padding:32px 36px 28px;position:relative}
+.modal-header-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:500}
+.modal-header h3{font-family:'Playfair Display',serif;font-size:26px;color:var(--white);font-weight:700;line-height:1.2;margin-bottom:4px}
+.modal-header-sub{font-size:13px;color:rgba(255,255,255,0.45);font-style:italic}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}
+.modal-close:hover{color:var(--white)}
+.modal-body{padding:32px 36px}
+.modal-body p{font-size:15px;line-height:1.8;color:#374151;margin-bottom:1.2em;font-weight:300}
+.modal-body p:last-of-type{margin-bottom:0}
+.modal-footer{padding:24px 36px;border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-amazon{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;padding:14px 28px;border-radius:2px;text-decoration:none;transition:background 0.2s}
+.btn-amazon:hover{background:#d4b060}
+.modal-footer-note{font-size:12px;color:var(--muted)}
+@media(max-width:560px){.modal-header,.modal-body,.modal-footer{padding:24px}.modal-header h3{font-size:22px}}
+
+#screen-questions{background:var(--off-white);min-height:100vh}
+.q-header{background:var(--navy);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.06)}
+.q-header-brand{font-family:'Playfair Display',serif;font-size:15px;color:rgba(255,255,255,0.7)}
+.q-header-count{font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:1px}
+.q-body{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.part-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:32px}
+.part-label-bar{width:32px;height:2px}
+.part-label-text{font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500}
+.part-a .part-label-bar{background:var(--conf)}.part-a .part-label-text{color:var(--conf)}
+.part-b .part-label-bar{background:var(--soc)}.part-b .part-label-text{color:var(--soc)}
+.subscale-heading{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.question-card{background:var(--white);border-radius:4px;border:1px solid var(--border);padding:28px 32px;margin-bottom:16px;transition:border-color 0.2s}
+.question-card.answered{border-color:rgba(26,51,87,0.25);box-shadow:0 2px 12px rgba(26,51,87,0.06)}
+.q-number{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:500}
+.q-text{font-size:16px;line-height:1.65;color:var(--text);margin-bottom:24px}
+.scale-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scale-option{display:none}
+.scale-label{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;padding:12px 4px;border:1px solid var(--border);border-radius:3px;transition:all 0.15s;text-align:center;background:var(--off-white)}
+.scale-label:hover{border-color:var(--navy);background:rgba(26,51,87,0.04)}
+.scale-option:checked+.scale-label{background:var(--navy);border-color:var(--navy)}
+.scale-option:checked+.scale-label .scale-num,.scale-option:checked+.scale-label .scale-word{color:var(--white)}
+.scale-num{font-size:18px;font-weight:600;color:var(--navy);font-family:'Playfair Display',serif}
+.scale-word{font-size:10px;color:var(--muted);line-height:1.3}
+.part-b .scale-option:checked+.scale-label{background:var(--teal);border-color:var(--teal)}
+.section-divider{margin:48px 0 40px;display:flex;align-items:center;gap:16px}
+.section-divider-line{flex:1;height:1px;background:var(--border)}
+.section-divider-text{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500}
+.q-footer{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.q-footer-info{font-size:13px;color:var(--muted)}
+.q-footer-info strong{color:var(--text)}
+.btn-submit{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;border:none;padding:14px 40px;cursor:pointer;border-radius:2px;opacity:0.4;pointer-events:none;transition:all 0.2s}
+.btn-submit.ready{opacity:1;pointer-events:auto}
+
+#screen-email{min-height:100vh;background:var(--navy);padding:60px 24px}
+.email-card{background:var(--white);border-radius:4px;max-width:520px;width:100%;padding:52px 48px;text-align:center}
+.email-card-icon{width:56px;height:56px;background:var(--gold-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:22px}
+.email-card h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);margin-bottom:12px}
+.email-intro{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:8px;font-weight:300}
+.email-value{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:28px;text-align:left;border-left:2px solid var(--gold);padding-left:16px}
+.email-input{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:2px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);background:var(--off-white);margin-bottom:8px;outline:none;transition:border-color 0.2s}
+.email-input:focus{border-color:var(--navy);background:var(--white)}
+.email-input.error{border-color:#c0392b}
+.email-error-msg{font-size:12px;color:#c0392b;margin-bottom:12px;text-align:left;display:none}
+.email-error-msg.visible{display:block}
+.btn-email-submit{width:100%;background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;border:none;padding:16px;cursor:pointer;border-radius:2px}
+.btn-email-submit:disabled{opacity:0.6;cursor:not-allowed}
+.email-submitting-msg{font-size:13px;color:var(--muted);margin-top:12px;text-align:center;display:none}
+.email-submitting-msg.visible{display:block}
+.email-privacy{font-size:12px;color:var(--muted);margin-top:14px}
+
+#screen-results{background:var(--off-white);min-height:100vh;padding-bottom:80px}
+.results-hero{background:var(--navy);padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.results-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 100%,#1e3d6e 0%,transparent 70%)}
+.results-hero-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:500;position:relative}
+.results-quadrant-name{font-family:'Playfair Display',serif;font-size:clamp(44px,9vw,80px);font-weight:700;color:var(--white);line-height:1;margin-bottom:16px;position:relative}
+.results-quadrant-tag{font-size:16px;color:rgba(255,255,255,0.55);font-weight:300;position:relative}
+.results-body{max-width:760px;margin:0 auto;padding:0 24px}
+.score-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:-36px;margin-bottom:32px;position:relative;z-index:10}
+.score-card{background:var(--white);border-radius:4px;border:1px solid var(--border);padding:28px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.score-card-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:500}
+.score-card-value{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;line-height:1;margin-bottom:4px}
+.score-card-max{font-size:14px;color:var(--muted)}
+.score-card-bar{height:4px;border-radius:2px;background:var(--border);margin-top:16px;overflow:hidden}
+.score-card-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);width:0%}
+.conf-card .score-card-value{color:var(--conf)}.conf-card .score-card-fill{background:var(--conf)}
+.soc-card .score-card-value{color:var(--soc)}.soc-card .score-card-fill{background:var(--soc)}
+.quadrant-desc-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:40px;margin-bottom:24px}
+.quadrant-desc-card h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:16px}
+.quadrant-desc-card p{font-size:16px;line-height:1.8;color:#374151;font-weight:300}
+.quadrant-grid-section{margin-bottom:24px}
+.quadrant-grid-section h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:16px;font-weight:600}
+.q-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--border)}
+.q-grid-cell{padding:24px 20px;background:var(--white);text-align:center;position:relative}
+.q-grid-cell.active{background:var(--navy)}
+.q-grid-cell.active .qg-name{color:var(--white)}
+.q-grid-cell.active .qg-tag{color:rgba(255,255,255,0.55)}
+.q-grid-cell.active::after{content:'You';position:absolute;top:8px;right:10px;font-size:10px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;font-weight:500}
+.qg-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.qg-tag{font-size:12px;color:var(--muted)}
+.practice-section{margin-bottom:24px}
+.practice-header{background:var(--navy);border-radius:4px;padding:32px 40px;margin-bottom:16px}
+.practice-header-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:500}
+.practice-header h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);margin-bottom:12px}
+.practice-header p{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;font-weight:300}
+.practice-priority-banner{background:var(--gold-pale);border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:20px 24px;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start}
+.practice-priority-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.practice-priority-text{font-size:14px;color:var(--text);line-height:1.6}
+.practice-priority-text strong{color:var(--navy)}
+.practice-category{background:var(--white);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;overflow:hidden}
+.practice-category.priority-1{border-color:var(--gold);border-width:2px}
+.practice-category.priority-2{border-color:rgba(201,168,76,0.5);border-width:2px}
+.practice-cat-header{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;border-bottom:1px solid transparent}
+.practice-category.open .practice-cat-header{border-bottom-color:var(--border)}
+.practice-category.priority-1 .practice-cat-header{background:rgba(201,168,76,0.06)}
+.practice-category.priority-2 .practice-cat-header{background:rgba(201,168,76,0.03)}
+.practice-cat-title-row{display:flex;align-items:center;gap:12px}
+.practice-priority-badge{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:2px}
+.priority-1 .practice-priority-badge{background:var(--gold);color:var(--navy)}
+.priority-2 .practice-priority-badge{background:rgba(201,168,76,0.2);color:#8a6d1a}
+.practice-cat-name{font-size:15px;font-weight:500;color:var(--navy)}
+.practice-cat-toggle{font-size:18px;color:var(--muted);transition:transform 0.2s}
+.practice-category.open .practice-cat-toggle{transform:rotate(180deg)}
+.practice-cat-body{display:none}
+.practice-category.open .practice-cat-body{display:block}
+.practice-item{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;gap:16px}
+.practice-item:last-child{border-bottom:none}
+.practice-item-num{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--border);flex-shrink:0;line-height:1;margin-top:2px;min-width:28px}
+.priority-1 .practice-item-num{color:rgba(201,168,76,0.4)}
+.practice-item-content{flex:1}
+.practice-item-action{font-size:15px;color:var(--text);line-height:1.6;margin-bottom:8px;font-weight:500}
+.practice-item-why{font-size:13px;color:var(--muted);line-height:1.6;font-style:italic}
+.breakdown-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:32px 40px;margin-bottom:24px}
+.breakdown-card h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:24px;font-weight:600}
+.breakdown-row{margin-bottom:20px}
+.breakdown-row:last-child{margin-bottom:0}
+.breakdown-row-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.breakdown-row-name{font-size:14px;color:var(--text);font-weight:500}
+.breakdown-row-score{font-size:13px;color:var(--muted)}
+.breakdown-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.breakdown-fill{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(0.4,0,0.2,1);width:0%}
+.cta-card{background:var(--navy);border-radius:4px;padding:48px 40px;text-align:center;margin-bottom:24px}
+.cta-card h3{font-family:'Playfair Display',serif;font-size:26px;color:var(--white);margin-bottom:12px}
+.cta-card p{font-size:15px;color:rgba(255,255,255,0.55);margin-bottom:28px;font-weight:300;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.7}
+.btn-cta{background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;border:none;padding:16px 44px;cursor:pointer;border-radius:2px;text-decoration:none;display:inline-block}
+.btn-cta:hover{background:#d4b060}
+.retake-row{text-align:center;margin-top:8px}
+.btn-retake{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline}
+.action-buttons{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.btn-action{flex:1;min-width:200px;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s;text-align:center}
+.btn-pdf{background:var(--white);color:var(--navy);border:2px solid var(--navy)}
+.btn-pdf:hover{background:var(--navy);color:var(--white)}
+.btn-subscribe{background:var(--teal);color:var(--white)}
+.btn-subscribe:hover{background:#156358}
+.btn-action-icon{font-size:16px;flex-shrink:0}
+@media(max-width:560px){.action-buttons{flex-direction:column}}
+@media print{
+  #screen-intro,#screen-questions,#screen-email,#progress-bar,.action-buttons,.retake-row,.cta-card,.modal-overlay{display:none!important}
+  #screen-results{display:block!important}
+  body{background:white;font-size:12px}
+  .results-hero{padding:32px 24px 56px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .results-body{padding:0 16px}
+  .score-cards{margin-top:-28px;margin-bottom:20px}
+  .score-card{box-shadow:none;border:1px solid #ddd}
+  .practice-cat-body{display:block!important}
+  .practice-category{break-inside:avoid}
+  .breakdown-card{break-inside:avoid}
+  .quadrant-desc-card{break-inside:avoid}
+  .results-hero::before{display:none}
+}
+@media(max-width:560px){.email-card{padding:40px 28px}.score-cards{grid-template-columns:1fr}.q-grid{grid-template-columns:1fr}.breakdown-card,.quadrant-desc-card,.practice-header{padding:24px}.practice-item{padding:16px}.scale-row{grid-template-columns:1fr;gap:6px}.scale-label{flex-direction:row;justify-content:flex-start;padding:12px 16px;gap:14px;text-align:left}.scale-num{font-size:16px;min-width:20px;text-align:center}.scale-word{font-size:13px;color:var(--muted)}}
+
+/* ── SITE NAV (assessment page) ── */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:150;padding:0 40px;height:52px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,31,56,0.97);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.site-nav-brand{font-family:'Playfair Display',serif;font-size:15px;color:rgba(255,255,255,0.8);font-weight:600;text-decoration:none}
+.site-nav-links{display:flex;gap:28px;list-style:none}
+.site-nav-links a{font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;letter-spacing:0.5px;transition:color 0.2s}
+.site-nav-links a:hover{color:var(--gold)}
+@media(max-width:600px){.site-nav{padding:0 16px}.site-nav-links{gap:16px}.site-nav-links a{font-size:11px}}
+</style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3S96VP3093"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3S96VP3093');</script>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="site-nav-brand" href="index.html">Open-Source Charisma</a>
+  <ul class="site-nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="book.html">The Book</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<section id="screen-intro" class="screen active">
+  <div class="intro-badge">Open-Source Charisma &mdash; What Type Are You?</div>
+  <h1 class="intro-title">The Open-Source<br><span>Charisma Indicator</span></h1>
+  <p class="intro-subtitle">Add to your impact when you want it most. Forty questions to show you how you come across right now, and specific advice on where to focus to stand out.</p>
+  <div class="intro-meta">
+    <div class="intro-meta-item"><strong>40</strong><span>Questions</span></div>
+    <div class="intro-meta-item"><strong>10'</strong><span>Average time</span></div>
+    <div class="intro-meta-item"><strong>4</strong><span>Quadrant types</span></div>
+  </div>
+  <button class="btn-primary" onclick="startAssessment()">Find Your Type</button>
+  <p class="intro-note">No right or wrong answers — rate how you typically behave, not how you'd like to.</p>
+  <div class="intro-book-row">
+    <a class="btn-book-link" href="https://www.amazon.com/Open-Source-Charisma-small-Confidence/dp/B0DB683KZ6" target="_blank" rel="noopener">
+      <span>&#9733;</span> Get the book on Amazon
+    </a>
+    <button class="btn-book-about" onclick="openModal()">What is Open-Source Charisma?</button>
+  </div>
+</section>
+
+<!-- ── BOOK SUMMARY MODAL ────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="book-modal" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-label">The Book</div>
+      <h3>Open-Source Charisma</h3>
+      <div class="modal-header-sub">125 Small Ways to Boost Your Charisma, Confidence, and Image &nbsp;&mdash;&nbsp; James G Harvey</div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Most professionals are more impressive than they appear. The gap isn't competence — it's charisma. And charisma, despite what most people assume, is not a personality trait you either have or lack. It is a measurable skill with identifiable components that can be learned, practised, and made your own.</p>
+      <p>Open-Source Charisma is built around a simple but powerful model: the Charisma Quadrant. It maps every communicator across two dimensions — Confidence and Social Skills — and places them in one of four types. The Unfortunately Invisible: talented, prepared, and largely unseen. The Unknowingly Influential: warm and well-liked, but holding back. The Occasionally Overconfident: sharp and capable, but leaving friction behind. The Courteous Charismatic: the person everyone wants in the room.</p>
+      <p>The model works because it is honest. Most charisma books tell you to be more present, more engaging, more likeable. This one shows you exactly where you are, why, and what to do about it — in practical, specific steps drawn from thirty years of working with senior leaders, sales teams, and client-facing professionals.</p>
+      <p>The result is 125 small, high-impact actions organised around your type. Not a transformation programme. Not a personality overhaul. A map, and the moves that matter most from where you are standing right now.</p>
+      <p><em>Find out which type you are. Then read the book.</em></p>
+    </div>
+    <div class="modal-footer">
+      <a class="btn-amazon" href="https://www.amazon.com/Open-Source-Charisma-small-Confidence/dp/B0DB683KZ6" target="_blank" rel="noopener">&#9733;&nbsp; Buy on Amazon</a>
+      <span class="modal-footer-note">Paperback from $9.99 &nbsp;&middot;&nbsp; Kindle edition available</span>
+    </div>
+  </div>
+</div>
+
+<section id="screen-questions" class="screen">
+  <div class="q-header">
+    <span class="q-header-brand">Charisma Quadrant</span>
+    <span class="q-header-count" id="header-count">0 / 40</span>
+  </div>
+  <div class="q-body" id="q-body"></div>
+  <div class="q-footer">
+    <div class="q-footer-info"><strong id="footer-answered">0</strong> of 40 answered</div>
+    <button class="btn-submit" id="btn-submit" onclick="goToEmail()">See My Results &rarr;</button>
+  </div>
+</section>
+
+<section id="screen-email" class="screen">
+  <div class="email-card">
+    <div class="email-card-icon">&#10003;</div>
+    <h2>Your results are ready</h2>
+    <p class="email-intro">Enter your email below. We will send you a full breakdown of your quadrant type, plus practical steps to develop from where you are.</p>
+    <div class="email-value">Your quadrant type and scores<br>A personalised development plan<br>Practical actions for this week, this month, and this year</div>
+    <input type="email" class="email-input" id="email-input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')submitEmail()">
+    <div class="email-error-msg" id="email-error">Please enter a valid email address.</div>
+    <button class="btn-email-submit" id="btn-email-submit" onclick="submitEmail()">Send me my results</button>
+    <div class="email-submitting-msg" id="email-submitting">Sending — one moment...</div>
+    <p class="email-privacy">No spam. Unsubscribe at any time.</p>
+  </div>
+</section>
+
+<section id="screen-results" class="screen">
+  <div class="results-hero">
+    <p class="results-hero-label">Your Charisma Quadrant Type</p>
+    <h2 class="results-quadrant-name" id="result-name"></h2>
+    <p class="results-quadrant-tag" id="result-tag"></p>
+  </div>
+  <div class="results-body">
+    <div class="score-cards">
+      <div class="score-card conf-card">
+        <div class="score-card-label">Confidence</div>
+        <div class="score-card-value" id="conf-score"></div>
+        <div class="score-card-max">out of 100</div>
+        <div class="score-card-bar"><div class="score-card-fill" id="conf-bar"></div></div>
+      </div>
+      <div class="score-card soc-card">
+        <div class="score-card-label">Social Skills</div>
+        <div class="score-card-value" id="soc-score"></div>
+        <div class="score-card-max">out of 100</div>
+        <div class="score-card-bar"><div class="score-card-fill" id="soc-bar"></div></div>
+      </div>
+    </div>
+    <div class="quadrant-desc-card">
+      <h3 id="desc-heading"></h3>
+      <p id="desc-text"></p>
+    </div>
+    <div class="quadrant-grid-section">
+      <h3>Where you sit right now</h3>
+      <div class="q-grid">
+        <div class="q-grid-cell" id="cell-arrogant"><div class="qg-name">The Occasionally Overconfident</div><div class="qg-tag">High confidence &middot; Lower social skills</div></div>
+        <div class="q-grid-cell" id="cell-charismatic"><div class="qg-name">The Courteous Charismatic</div><div class="qg-tag">High confidence &middot; High social skills</div></div>
+        <div class="q-grid-cell" id="cell-invisible"><div class="qg-name">The Unfortunately Invisible</div><div class="qg-tag">Lower confidence &middot; Lower social skills</div></div>
+        <div class="q-grid-cell" id="cell-influential"><div class="qg-name">The Unknowingly Influential</div><div class="qg-tag">Lower confidence &middot; High social skills</div></div>
+      </div>
+    </div>
+    <div id="practice-menu"></div>
+    <div class="breakdown-card"><h3>Confidence &mdash; subscale scores</h3><div id="conf-breakdown"></div></div>
+    <div class="breakdown-card"><h3>Social Skills &mdash; subscale scores</h3><div id="soc-breakdown"></div></div>
+    <div class="action-buttons">
+      <button class="btn-action btn-pdf" onclick="downloadPDF()">
+        <span class="btn-action-icon">&#8681;</span> Download your results as PDF
+      </button>
+      <a class="btn-action btn-subscribe" href="https://presentation-guru.us5.list-manage.com/subscribe?u=816f112ee06e3f52ea77a1f2a&id=7ed36e13c8" target="_blank" rel="noopener">
+        <span class="btn-action-icon">&#9993;</span> Subscribe to Presentation Guru
+      </a>
+    </div>
+    <div class="cta-card">
+      <h3>Read the book</h3>
+      <p>Open-Source Charisma explores all four quadrant types in depth &mdash; and what it takes to move between them.</p>
+      <a class="btn-cta" href="https://www.themessagebusiness.com" target="_blank">Find out more</a>
+    </div>
+    <div class="retake-row"><button class="btn-retake" onclick="retake()">Retake the assessment</button></div>
+  </div>
+</section>
+
+<script>
+const MAILCHIMP_ACTION = 'https://YOUR_MAILCHIMP_FORM_ACTION_URL_HERE';
+const MAILCHIMP_FIELD  = 'EMAIL';
+
+function openModal(){document.getElementById('book-modal').classList.add('active');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('book-modal').classList.remove('active');document.body.style.overflow='';}
+function closeModalOutside(e){if(e.target===document.getElementById('book-modal'))closeModal();}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+const QUESTIONS = [
+  {id:1,  part:'a', sub:'Self-Esteem & Self-Worth',       text:'I feel confident in my ability to make important decisions.',                                     rev:false},
+  {id:2,  part:'a', sub:'Self-Esteem & Self-Worth',       text:'I often hesitate to express my opinions in group settings.',                                     rev:true},
+  {id:3,  part:'a', sub:'Self-Esteem & Self-Worth',       text:'I take initiative to start new projects or ideas rather than waiting to be asked.',              rev:false},
+  {id:4,  part:'a', sub:'Self-Esteem & Self-Worth',       text:'I can clearly articulate my own strengths.',                                                     rev:false},
+  {id:5,  part:'a', sub:'Self-Esteem & Self-Worth',       text:'I feel uncomfortable when receiving feedback about my performance.',                             rev:true},
+  {id:6,  part:'a', sub:'Resilience & Composure',         text:'I handle criticism without taking it personally.',                                               rev:false},
+  {id:7,  part:'a', sub:'Resilience & Composure',         text:'I remain positive and motivated even after setbacks.',                                           rev:false},
+  {id:8,  part:'a', sub:'Resilience & Composure',         text:'I struggle to maintain composure when under pressure.',                                          rev:true},
+  {id:9,  part:'a', sub:'Resilience & Composure',         text:"I make decisions confidently even when the picture isn't complete.",                             rev:false},
+  {id:10, part:'a', sub:'Resilience & Composure',         text:'I feel anxious when taking on leadership responsibilities.',                                     rev:true},
+  {id:11, part:'a', sub:'Assertiveness & Accountability', text:'I can assert myself without being aggressive or defensive.',                                     rev:false},
+  {id:12, part:'a', sub:'Assertiveness & Accountability', text:'I feel comfortable taking responsibility for my actions and decisions.',                         rev:false},
+  {id:13, part:'a', sub:'Assertiveness & Accountability', text:'I feel uncomfortable networking with influential or senior people.',                             rev:true},
+  {id:14, part:'a', sub:'Assertiveness & Accountability', text:'I speak up with confidence when I have something important to contribute.',                     rev:false},
+  {id:15, part:'a', sub:'Assertiveness & Accountability', text:'I find it hard to talk openly about my achievements.',                                          rev:true},
+  {id:16, part:'a', sub:'Growth & Adaptability',          text:'I seek opportunities for personal and professional growth.',                                     rev:false},
+  {id:17, part:'a', sub:'Growth & Adaptability',          text:'I am open to learning from both successes and failures.',                                        rev:false},
+  {id:18, part:'a', sub:'Growth & Adaptability',          text:'I adapt well to new situations and challenges.',                                                 rev:false},
+  {id:19, part:'a', sub:'Growth & Adaptability',          text:'I avoid trying new things because I worry about failing.',                                       rev:true},
+  {id:20, part:'a', sub:'Growth & Adaptability',          text:'I regularly set and work towards meaningful personal goals.',                                    rev:false},
+  {id:21, part:'b', sub:'Empathy & Listening',            text:'I give others my full attention when they are speaking.',                                        rev:false},
+  {id:22, part:'b', sub:'Empathy & Listening',            text:"I often interrupt others when they're talking.",                                                 rev:true},
+  {id:23, part:'b', sub:'Empathy & Listening',            text:'I demonstrate understanding and support when others face difficulties.',                         rev:false},
+  {id:24, part:'b', sub:'Empathy & Listening',            text:"I find it easy to recognise and respond to others' emotions.",                                  rev:false},
+  {id:25, part:'b', sub:'Empathy & Listening',            text:"I tend to dismiss or minimise others' feelings.",                                                rev:true},
+  {id:26, part:'b', sub:'Warmth & Social Courtesy',       text:'I greet people with genuine friendliness and warmth.',                                          rev:false},
+  {id:27, part:'b', sub:'Warmth & Social Courtesy',       text:'I show appreciation and gratitude to others regularly.',                                         rev:false},
+  {id:28, part:'b', sub:'Warmth & Social Courtesy',       text:'I struggle to make people feel welcomed and included.',                                          rev:true},
+  {id:29, part:'b', sub:'Warmth & Social Courtesy',       text:'I am consistently polite and considerate in my interactions.',                                  rev:false},
+  {id:30, part:'b', sub:'Warmth & Social Courtesy',       text:'I rarely thank people or acknowledge their contributions.',                                      rev:true},
+  {id:31, part:'b', sub:'Conversational Skills',          text:'I engage others in meaningful and balanced conversations.',                                      rev:false},
+  {id:32, part:'b', sub:'Conversational Skills',          text:'I tend to dominate conversations, talking more than listening.',                                 rev:true},
+  {id:33, part:'b', sub:'Conversational Skills',          text:'I adapt my communication style to suit different audiences.',                                    rev:false},
+  {id:34, part:'b', sub:'Conversational Skills',          text:"I can easily initiate conversations with people I don't know well.",                            rev:false},
+  {id:35, part:'b', sub:'Conversational Skills',          text:"I find it difficult to sustain conversations with people I don't know well.",                   rev:true},
+  {id:36, part:'b', sub:'Emotional Control & Humility',   text:'I remain calm and composed in social conflicts.',                                                rev:false},
+  {id:37, part:'b', sub:'Emotional Control & Humility',   text:'I acknowledge my mistakes and learn from them openly.',                                         rev:false},
+  {id:38, part:'b', sub:'Emotional Control & Humility',   text:'I lose my temper easily when disagreements arise.',                                             rev:true},
+  {id:39, part:'b', sub:'Emotional Control & Humility',   text:'I give credit to team members for their contributions and successes.',                          rev:false},
+  {id:40, part:'b', sub:'Emotional Control & Humility',   text:'I tend to take more credit for group achievements than I probably deserve.',                    rev:true}
+];
+
+const SCALE = ['Strongly Disagree','Disagree','Neither','Agree','Strongly Agree'];
+
+const Q = {
+  charismatic:{name:'The Courteous Charismatic',tag:'Higher Confidence \u00b7 Higher Social Skills',heading:'Competent and connected. The challenge now is keeping it real.',text:"People follow you and you know why. You are warm, articulate, and at ease in most rooms. Right now you are leaving a positive trace \u2014 people feel better after spending time with you. The risk is overextension. As the stakes rise, the pressure to be everything to everyone grows. This result reflects where you are right now, not a fixed identity. Notice the situations where it shifts.",cell:'cell-charismatic',intro:"You have the core skills. This section is about deepening them, staying grounded, and making sure your presence lifts others rather than inadvertently overwhelming them.",key:'charismatic'},
+  arrogant:   {name:'The Occasionally Overconfident',tag:'Higher Confidence \u00b7 Lower Social Skills',heading:'Sharp and capable. The missing piece is empathy.',text:"You get things done and you know your value. Right now the trace you leave can feel mixed \u2014 people respect your capability but may feel talked over or unheard. That is not about your confidence, which is a genuine strength. It is about adding connection to it. The fix is simpler than it sounds. This result reflects current patterns, not who you are. The map shows you where to focus next.",cell:'cell-arrogant',intro:"Your capability is not in question. This section is about making sure that capability lands well \u2014 that people want to follow you rather than just comply with you.",key:'arrogant'},
+  influential:{name:'The Unknowingly Influential',tag:'Lower Confidence \u00b7 Higher Social Skills',heading:'People respond to you better than you realise.',text:"You connect naturally, build trust easily, and are often the person others gravitate towards. The trace you leave is warm and positive. What holds you back is not how others see you \u2014 it is how you see yourself. You hold back instinctively. You wait. The only thing underselling you is you. This result shows where you are right now. The map points to one clear direction: back yourself.",cell:'cell-influential',intro:"You connect well. You are probably better at this than you realise. These activities are about converting that social ability into visible, acknowledged influence.",key:'influential'},
+  invisible:  {name:'The Unfortunately Invisible',tag:'Lower Confidence \u00b7 Lower Social Skills',heading:'Talented but overlooked. Ability is not the gap.',text:"Your work is there. The problem is that not enough people see it clearly yet. Right now the trace you leave is quieter than it should be \u2014 not because of what you contribute, but because of how visible that contribution is. This is the most common starting point in the quadrant, and it is not a fixed state. Charisma is a skill. External confidence \u2014 how you come across \u2014 is faster to build than you think. This result shows where you are right now. The map shows the way forward.",cell:'cell-invisible',intro:"You have more to offer than people realise. These activities are about closing that gap \u2014 building visibility and confidence at the same time.",key:'invisible'}
+};
+
+const PL = {
+  invisible:{
+    'Self-Esteem & Self-Worth':{label:'Building Self-Esteem and Self-Worth',items:[['List your five strongest qualities and update the list every month.','Self-worth is not arrogance. Knowing what you genuinely do well is the foundation of projecting it.'],['Accept a compliment without deflecting it.','Deflecting compliments signals low worth to others. A simple thank you is enough.'],['Speak to yourself the way you would speak to a colleague you respect.','Self-talk shapes internal confidence. This is not about affirmations. It is about basic fairness to yourself.'],['Say no to one request this week that takes you away from what matters.','Boundaries communicate self-respect. People who cannot say no are often liked but rarely respected.']]},
+    'Resilience & Composure':{label:'Managing Nerves and Anxiety',items:[['Prepare more than feels necessary before any high-stakes interaction.','Preparation directly reduces anxiety. Most nerves are about the unknown. Remove the unknown where you can.'],['Use slow, deliberate breathing for two minutes before a difficult conversation or presentation.','This is physiological, not motivational. It genuinely reduces the stress response in your body.'],['Visualise the conversation going well, in specific detail.','Mental rehearsal primes the brain for the real thing. Athletes use it. It works.'],['Identify the specific trigger behind a recurring anxiety and write it down.','Unnamed fears are harder to manage. Named ones can be addressed one step at a time.']]},
+    'Assertiveness & Accountability':{label:'Being Seen at Work',items:[['Speak up in the first five minutes of a meeting.','Early contributions set your presence in the room. After that, speaking gets easier.'],['Share one achievement with your manager or team without waiting to be asked.','Visibility is not boasting. It is making sure your work is connected to your name.'],['Ask a thoughtful question in a group setting once a week.','Questions show you are engaged and get you heard without requiring a long speech.'],["Offer to present the team's work, even for five minutes.",'Every presentation, however small, is a confidence deposit. The next one feels less daunting.']]},
+    'Growth & Adaptability':{label:'Building Confidence Through Track Record',items:[['Keep a running record of your wins, however small.','Confidence is built on evidence. A written record is harder to dismiss than a feeling.'],['Set one achievable goal each week and tick it off.','Small, consistent achievements rewire how you see yourself over time.'],['Reflect on one thing that went well at the end of each day.','Most people replay what went wrong. This habit deliberately builds a more accurate picture.'],['Identify one skill gap and make a plan to close it.','Competence and confidence are linked. Knowing you are actively improving changes how you carry yourself.']]},
+    'Empathy & Listening':{label:'Empathy and Listening',items:[["Use the other person's name once or twice in a conversation.",'A small thing with a disproportionate effect. It signals attention and respect.'],['Ask a thoughtful question and then listen fully to the answer.','Being a genuinely good listener is rare. It is also one of the fastest ways to build trust.'],['Summarise what you have heard before you respond.','This confirms understanding and shows you were paying attention.']]},
+    'Warmth & Social Courtesy':{label:'Warmth and Social Courtesy',items:[['Attend the company event you would normally skip.','People build impressions of you even when you are not speaking. Being present is a first step.'],['Introduce yourself to one new person at each event or meeting.','A simple introduction done consistently builds a much wider network than occasional heroics.'],['Show appreciation and gratitude to someone who helped you this week.','Specific gratitude is rare and remembered.']]},
+    'Conversational Skills':{label:'Conversational Skills',items:[['Ask an open-ended question and listen without planning your response.','Good questions do more social work than good answers. They make people feel interesting.'],['Stay in a conversation slightly longer than feels comfortable.','Many meaningful connections are made in the moment just after you would normally have moved on.'],['Find common ground with someone you usually struggle to connect with.','Shared experience, however small, creates connection.']]},
+    'Emotional Control & Humility':{label:'Emotional Control and Humility',items:[['Acknowledge a mistake openly and move on without excessive self-criticism.','Owning mistakes cleanly is rare and builds trust fast.'],['Give credit to someone else publicly for their contribution.','People who share credit get more of it in the long run.'],['Notice when you feel defensive and pause before responding.','The pause is where better judgement lives.']]}
+  },
+  influential:{
+    'Self-Esteem & Self-Worth':{label:'Backing Yourself',items:[['Put yourself forward for one opportunity before you feel ready.','Readiness is largely a feeling, not a fact. The experience of doing something is what creates confidence.'],['State your opinion clearly in the next meeting where you have a view.','Influential people are known to have positions. Being agreeable is likeable. Having a clear point of view is influential.'],['Find a mentor who will tell you the truth about what you are capable of.','Imposter syndrome shrinks in the face of honest external assessment.'],['Ask for a piece of work that stretches your current ability.','Track record is built by doing things slightly beyond your comfort zone. That record becomes your confidence.']]},
+    'Resilience & Composure':{label:'Building Resilience',items:[['Ask for feedback on a specific piece of work, not general feedback.','Specific feedback gives you something concrete to act on. It also tells others you are serious about improving.'],['When you feel uncertain, act at 70% confidence rather than waiting for certainty.','No one feels 100% ready. Confident people act at 70% and figure out the rest as they go.'],['Visualise the conversation going well, in specific detail, before a high-stakes moment.','Mental rehearsal primes the brain for the real thing. Confidence follows from preparation.']]},
+    'Assertiveness & Accountability':{label:'Professional Visibility',items:[['Post one thoughtful piece of content on LinkedIn each month.','Visibility to people you have never met builds professional reputation over time.'],['Turn your camera on in every online meeting by default.','A face creates connection. A name on a black square does not.'],['Contribute at least one thing in every online meeting, even a short one.','Presence in virtual rooms requires deliberate effort. Participation is the minimum requirement.'],['Follow up within 24 hours after meeting someone who matters.','Most people intend to follow up. The ones who do are automatically more memorable.']]},
+    'Growth & Adaptability':{label:'Building Conversational Confidence',items:[['Share a personal story or experience in a conversation this week.','People connect to people, not to positions. Sharing something real builds real rapport.'],['Stay in a conversation slightly longer than feels comfortable.','Many influential connections are made in the moment just after you would normally have moved on.'],['Ask open-ended questions that invite the other person to go deeper.','Good questions do more social work than good answers. They make people feel interesting.']]},
+    'Empathy & Listening':{label:'Empathy and Listening',items:[["Use the other person's name once or twice in a conversation.",'A small thing with a disproportionate effect. It signals attention and respect.'],['Find common ground with someone you usually struggle to connect with.','Rapport across difference is a real skill. Shared experience, however small, creates connection.'],['Research someone before you meet them and reference something specific.','This signals respect and genuine interest and makes the conversation more substantive.']]},
+    'Warmth & Social Courtesy':{label:'Warmth and Social Courtesy',items:[['Introduce yourself with your name and one clear sentence about what you do.','A crisp introduction is memorable. Most people stumble here. A prepared, natural version stands out.'],['Smile and make eye contact when you walk into a room.','First impressions are formed in seconds. These two things determine most of the initial one.'],['After a client meeting, send a short summary of what was agreed.','This builds trust and professional credibility faster than almost anything else at low effort.']]},
+    'Conversational Skills':{label:'Conversational Skills',items:[['Ask open-ended questions that invite the other person to go deeper.','Good questions do more social work than good answers.'],['Stay in a conversation slightly longer than feels comfortable.','Many influential connections are made in the moment just after you would normally have moved on.'],['Find common ground with someone you usually struggle to connect with.','Rapport across difference is a real skill.']]},
+    'Emotional Control & Humility':{label:'Emotional Control and Humility',items:[['Accept a compliment without deflecting it.','Deflecting compliments signals low worth. A simple thank you means more than you think.'],['Acknowledge a mistake openly and without qualification.','Owning mistakes without a but is rare and memorable. It builds trust faster than competence alone.'],['Give credit to others publicly when they contribute.','People who share credit get more of it in the long run.']]}
+  },
+  arrogant:{
+    'Empathy & Listening':{label:'Building Empathy',items:[['Before giving your view in a conversation, ask one genuine question first.','This one habit changes the dynamic of most interactions. It signals that you are interested, not just asserting.'],['When someone comes to you with a problem, acknowledge how they feel before offering a solution.','Most people want to feel heard before they want to be helped. Skipping this step is why good advice sometimes lands badly.'],['Pause before responding when you feel certain you are right.','The pause creates space for you to hear what was actually said rather than what you expected.'],['Say I understand or that makes sense and mean it before you move on.','Validation is not agreement. People need it before they can hear what comes next.']]},
+    'Warmth & Social Courtesy':{label:'Building Humility',items:[['Acknowledge a mistake to the person it affected, without qualification.','Owning mistakes without a but is rare and memorable. It builds trust faster than competence alone.'],['Share credit publicly for a success your team contributed to.','People who share credit get more of it in the long run. People who hoard it get less.'],['Introduce yourself to someone at a work event and spend five minutes focused entirely on them.','Making someone else feel like the most interesting person in the room is a skill that pays back consistently.'],["Practise saying I don't know when you genuinely do not.",'Honesty about limits builds credibility. It also gives others permission to be honest with you.']]},
+    'Conversational Skills':{label:'Listening Skills',items:[['Use the 70/30 rule in your next three one-to-ones.','Listen 70%, talk 30%. Count if you need to at first. The discipline quickly becomes a habit.'],['Put your phone face-down in every conversation this week.','The phone being visible, even face-down, reduces the quality of conversation. Remove the distraction entirely.'],['Summarise what you have heard before you respond.','This confirms understanding, shows you were listening, and often opens the conversation further.'],['Count to three before responding in any conversation where you feel a strong reaction.','The pause signals composure. It also often changes what you decide to say.']]},
+    'Emotional Control & Humility':{label:'Controlling Your Ego',items:[['Ask for feedback from someone who is likely to challenge you, not comfort you.','Useful feedback is uncomfortable. Seek it deliberately rather than waiting for it to arrive.'],['Sit with feedback you disagree with before responding.','The instinct to rebut immediately is usually about protecting the ego. Sitting with it often reveals something useful.'],["Find one thing to genuinely celebrate in a colleague's success this week.",'Generosity of spirit is visible. Its absence is equally visible.'],["Ask someone junior to you for their view on something you are working on.",'Genuine curiosity about others perspectives, regardless of seniority, is one of the clearest signals of a strong leader.']]},
+    'Self-Esteem & Self-Worth':{label:'Giving Feedback Well',items:[['Give feedback on a specific behaviour, not a character trait.','You interrupted three times in that meeting is actionable. You are dismissive is not.'],['Give difficult feedback in private, never in front of others.','Public criticism damages trust immediately. It rarely improves performance and often destroys motivation.'],['Ask before giving feedback whether it would be useful to share your view.','Unsolicited feedback, however accurate, often creates defensiveness. Permission changes the reception entirely.']]},
+    'Resilience & Composure':{label:'Composure Under Pressure',items:[['Before a difficult conversation, write down the outcome you want and the outcome the other person probably wants.','Understanding where interests overlap gives you a place to start.'],['Take a breath and pause before responding to anything that provokes a strong reaction.','Your first reaction is rarely your best one. The pause is where judgement lives.'],['When someone is difficult, ask what might be driving their behaviour rather than just reacting to it.','Curiosity about difficult people is more productive than judgement.']]},
+    'Assertiveness & Accountability':{label:'Assertiveness and Accountability',items:[['Observe body language during your next difficult conversation.','Verbal content is only part of what is being communicated. The physical signals often tell a different story.'],['Ask a clarifying question when something is not clear rather than assuming.','Assumptions are the most common source of unnecessary conflict. A question costs nothing.'],['When you catch yourself comparing yourself favourably to others, redirect to your own progress.','People absorbed in their own journey are more interesting to be around.']]},
+    'Growth & Adaptability':{label:'Growth and Adaptability',items:[['Read one novel this year written from a perspective very different from your own.','Fiction builds the empathy muscle over time. The research is clear on it.'],['After a conflict, ask yourself what you could have done differently before assessing the other person.','This is the hardest and most useful question in any difficult situation.'],['Review your goals each quarter and adjust based on what has changed.','Goals that stay fixed in changing circumstances become obstacles.']]}
+  },
+  charismatic:{
+    'Self-Esteem & Self-Worth':{label:'Keeping a Positive Mindset',items:[['Start each day by writing down three things you are genuinely grateful for.','Gratitude is a discipline that keeps perspective intact when things are hard. It is also one of the cheapest mood-management tools available.'],['Notice when your energy drops and name the cause.','Self-awareness about energy states lets you manage them. Most people do not notice until they are already running on empty.'],['Spend time each week with people who energise rather than drain you.','Charisma requires energy. Protecting your energy is not selfishness. It is sustainability.']]},
+    'Resilience & Composure':{label:'Finding Perspective in Difficult Situations',items:[['Before a difficult conversation, write down the outcome you want and the outcome the other person probably wants.','Understanding where interests overlap gives you a place to start.'],['Take a breath and pause before responding to anything that provokes a strong reaction.','Your first reaction is rarely your best one. The pause is where judgement lives.'],['Seek input from someone with a different perspective before making a significant decision.','The quality of decisions improves with diverse input. The habit also signals genuine openness to others.'],['When someone is difficult, ask what might be driving their behaviour rather than just reacting to it.','Curiosity about difficult people is more productive than judgement.']]},
+    'Assertiveness & Accountability':{label:'Managing Your Long-Term Development',items:[['Identify the one habit that is most undermining your charisma right now and focus on it for 30 days.','One focused effort usually produces more change than five partial ones.'],['Ask someone you trust what the one thing is that you do that holds you back.','Most people have never been asked this. The answers are almost always actionable.'],['Review your goals each quarter and adjust based on what has changed.','Goals that stay fixed in changing circumstances become obstacles.']]},
+    'Growth & Adaptability':{label:'Long-Term Development',items:[['Read one biography of someone whose influence you admire.','Other people\'s stories are the fastest route to perspective on your own.'],['Review your goals each quarter and adjust based on what has changed.','Goals that stay fixed in changing circumstances become obstacles.'],['Identify the one habit that is most undermining your charisma right now and focus on it for 30 days.','One focused effort usually produces more change than five partial ones.']]},
+    'Empathy & Listening':{label:'Showing Kindness',items:[['Write a short, specific thank-you message to someone who helped you this week.','Specific gratitude is rare and remembered. It lands differently from a generic thanks.'],['When someone seems stressed or distracted, ask if they are alright.','Noticing and naming is one of the most underused social skills. Most people are waiting for someone to ask.'],['Make a point of including someone who has been quiet in a group conversation.','Bringing people in is one of the most visible signs of a genuinely charismatic person.']]},
+    'Warmth & Social Courtesy':{label:'Warmth and Kindness',items:[['Offer to help before being asked, when you can see someone is struggling.','Proactive support builds trust and goodwill faster than reactive support.'],['Practise patience and give the other person time to finish before you speak.','Patience is a form of respect. Rushed conversations leave people feeling like they were a task, not a person.'],['Write a short, specific thank-you message to someone who helped you this week.','Specific gratitude is rare and remembered.']]},
+    'Conversational Skills':{label:'Deepening Social Skills',items:[['Match your energy to the room rather than bringing the same level into every situation.','Reading the energy of a group and adapting to it is one of the defining skills of a highly charismatic person.'],['Ask someone to tell you more about something they are clearly excited about.','Tell me more is one of the most powerful phrases in any relationship. It signals real interest.'],['Be specific in your praise and name the thing, not just the feeling.','The way you handled that client question showed real judgement is three times more valuable than well done.'],['Learn one fact about everyone in your team that is not work-related.','Knowing people as people, not just as colleagues, changes the quality of every interaction.']]},
+    'Emotional Control & Humility':{label:'Emotional Control and Humility',items:[['Use humour to lighten a tense moment and then return to the substance.','Well-timed levity is a skill. It releases tension without dismissing what is serious.'],['Take a proper break at least once during each working day.','Sustained presence is not the same as unbroken presence. Short, genuine breaks restore the quality of attention.'],['When something goes wrong, ask what you can control rather than what went wrong.','A focus on agency rather than blame keeps you in a productive state. It is also more pleasant to be around.']]}
+  }
+};
+
+var answers = {};
+
+function renderQuestions() {
+  var body = document.getElementById('q-body');
+  var html = '', ls = '', lp = '';
+  QUESTIONS.forEach(function(q) {
+    if (q.part !== lp) {
+      if (lp !== '') html += '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-text">Part B &mdash; Social Skills</div><div class="section-divider-line"></div></div>';
+      lp = q.part; ls = '';
+    }
+    if (q.sub !== ls) {
+      if (ls === '' && q.part === 'a') html += '<div class="part-label part-a"><div class="part-label-bar"></div><div class="part-label-text">Part A &mdash; Confidence</div></div>';
+      html += '<div class="subscale-heading">' + q.sub + '</div>';
+      ls = q.sub;
+    }
+    var opts = [1,2,3,4,5].map(function(n) {
+      return '<input type="radio" class="scale-option" name="q'+q.id+'" id="q'+q.id+'n'+n+'" value="'+n+'" onchange="recordAnswer('+q.id+','+n+')">' +
+             '<label class="scale-label" for="q'+q.id+'n'+n+'"><span class="scale-num">'+n+'</span><span class="scale-word">'+SCALE[n-1]+'</span></label>';
+    }).join('');
+    html += '<div class="question-card'+(q.part==='b'?' part-b':'')+'" id="card-'+q.id+'">' +
+            '<div class="q-number">Question '+q.id+'</div>' +
+            '<div class="q-text">'+q.text+'</div>' +
+            '<div class="scale-row">'+opts+'</div></div>';
+  });
+  body.innerHTML = html;
+}
+
+function startAssessment() {
+  showScreen('screen-questions');
+  renderQuestions();
+  updateProgress();
+}
+
+function recordAnswer(qId, val) {
+  answers[qId] = val;
+  document.getElementById('card-'+qId).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  var c = Object.keys(answers).length;
+  document.getElementById('progress-fill').style.width = (c/40*100)+'%';
+  document.getElementById('header-count').textContent = c+' / 40';
+  document.getElementById('footer-answered').textContent = c;
+  var btn = document.getElementById('btn-submit');
+  if (c === 40) btn.classList.add('ready');
+  else btn.classList.remove('ready');
+}
+
+function goToEmail() {
+  if (Object.keys(answers).length < 40) return;
+  showScreen('screen-email');
+}
+
+function submitEmail() {
+  var inp = document.getElementById('email-input');
+  var err = document.getElementById('email-error');
+  var btn = document.getElementById('btn-email-submit');
+  var ldg = document.getElementById('email-submitting');
+  var email = inp.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    inp.classList.add('error'); err.classList.add('visible'); inp.focus(); return;
+  }
+  inp.classList.remove('error'); err.classList.remove('visible');
+  btn.disabled = true; btn.textContent = 'Sending...'; ldg.classList.add('visible');
+  var url = MAILCHIMP_ACTION.replace('/post?','/post-json?') + '&' + MAILCHIMP_FIELD + '=' + encodeURIComponent(email) + '&c=mcDone';
+  var s = document.createElement('script');
+  window.mcDone = function() { s.remove(); delete window.mcDone; showResults(); };
+  s.src = url;
+  s.onerror = function() { s.remove(); delete window.mcDone; showResults(); };
+  document.head.appendChild(s);
+  setTimeout(function() { if (window.mcDone) { delete window.mcDone; showResults(); } }, 4000);
+}
+
+function showResults() {
+  showScreen('screen-results');
+  calculateAndRender();
+}
+
+function scoreItem(q, raw) { return q.rev ? (6 - raw) : raw; }
+
+function renderPracticeMenu(qk, ss) {
+  var quad = Q[qk];
+  var lib = PL[qk];
+  var ranked = Object.keys(ss).map(function(n) {
+    var d = ss[n];
+    return {name:n, pct:Math.round((d.total/(d.count*5))*100)};
+  }).sort(function(a,b){return a.pct-b.pct;});
+  var pri = [];
+  ranked.forEach(function(s) {
+    if (lib[s.name] && pri.length < 2) pri.push({subscale:s.name, pct:s.pct});
+  });
+  var p1 = pri[0], p2 = pri[1];
+  var bt = '';
+  if (p1 && p2) bt = 'Based on your scores, your two lowest areas are <strong>'+p1.subscale+'</strong> ('+p1.pct+'%) and <strong>'+p2.subscale+'</strong> ('+p2.pct+'%). Start with those two categories &mdash; they are marked below and expanded for you.';
+  else if (p1) bt = 'Based on your scores, your lowest area is <strong>'+p1.subscale+'</strong> ('+p1.pct+'%). Start there.';
+  var priKeys = pri.map(function(p){return p.subscale;});
+  var allKeys = Object.keys(lib);
+  var ordKeys = priKeys.concat(allKeys.filter(function(k){return priKeys.indexOf(k)===-1;}));
+  var ch = '';
+  ordKeys.forEach(function(ck, idx) {
+    var cat = lib[ck]; if (!cat) return;
+    var pi = priKeys.indexOf(ck);
+    var is1 = pi===0, is2 = pi===1;
+    var pc = is1?'priority-1':is2?'priority-2':'';
+    var badge = is1?'<span class="practice-priority-badge">Start here</span>':is2?'<span class="practice-priority-badge">Focus area</span>':'';
+    var cnt = is1?4:3;
+    var ih = cat.items.slice(0,cnt).map(function(item,i){
+      return '<div class="practice-item"><div class="practice-item-num">'+(i+1)+'</div><div class="practice-item-content"><div class="practice-item-action">'+item[0]+'</div><div class="practice-item-why">'+item[1]+'</div></div></div>';
+    }).join('');
+    ch += '<div class="practice-category '+pc+' '+(is1||is2?'open':'')+'" id="pc'+idx+'">'+
+          '<div class="practice-cat-header" onclick="tc(\'pc'+idx+'\')">'+
+          '<div class="practice-cat-title-row">'+badge+'<span class="practice-cat-name">'+cat.label+'</span></div>'+
+          '<span class="practice-cat-toggle">&#9662;</span></div>'+
+          '<div class="practice-cat-body">'+ih+'</div></div>';
+  });
+  document.getElementById('practice-menu').innerHTML =
+    '<div class="practice-section">'+
+    '<div class="practice-header"><div class="practice-header-label">Your Personal Practice Menu</div><h3>Where to focus next</h3><p>'+quad.intro+'</p></div>'+
+    (bt?'<div class="practice-priority-banner"><div class="practice-priority-icon">&#9711;</div><div class="practice-priority-text">'+bt+'</div></div>':'')+
+    ch+'</div>';
+}
+
+function tc(id){ document.getElementById(id).classList.toggle('open'); }
+
+function calculateAndRender() {
+  var cT=0, sT=0, ss={};
+  QUESTIONS.forEach(function(q) {
+    var raw = answers[q.id] || 3;
+    var sc = scoreItem(q, raw);
+    if (q.part==='a') cT+=sc; else sT+=sc;
+    if (!ss[q.sub]) ss[q.sub]={total:0,count:0,part:q.part};
+    ss[q.sub].total+=sc; ss[q.sub].count++;
+  });
+  var quad;
+  if      (cT>60 && sT>60)  quad = Q.charismatic;
+  else if (cT>60 && sT<=60) quad = Q.arrogant;
+  else if (cT<=60 && sT>60) quad = Q.influential;
+  else                       quad = Q.invisible;
+
+  document.getElementById('result-name').textContent = quad.name;
+  document.getElementById('result-tag').textContent  = quad.tag;
+  document.getElementById('conf-score').textContent  = cT;
+  document.getElementById('soc-score').textContent   = sT;
+  setTimeout(function(){
+    document.getElementById('conf-bar').style.width = cT+'%';
+    document.getElementById('soc-bar').style.width  = sT+'%';
+  }, 100);
+  document.getElementById('desc-heading').textContent = quad.heading;
+  document.getElementById('desc-text').textContent    = quad.text;
+  ['cell-charismatic','cell-arrogant','cell-influential','cell-invisible'].forEach(function(id){
+    document.getElementById(id).classList.remove('active');
+  });
+  document.getElementById(quad.cell).classList.add('active');
+  renderPracticeMenu(quad.key, ss);
+  function rb(cid, subs, color) {
+    var el = document.getElementById(cid);
+    el.innerHTML = subs.map(function(item){
+      var name=item[0], data=item[1];
+      var pct = Math.round((data.total/(data.count*5))*100);
+      return '<div class="breakdown-row"><div class="breakdown-row-head"><span class="breakdown-row-name">'+name+'</span><span class="breakdown-row-score">'+pct+'%</span></div><div class="breakdown-bar"><div class="breakdown-fill" style="background:'+color+';width:'+pct+'%"></div></div></div>';
+    }).join('');
+  }
+  var cSubs = Object.keys(ss).filter(function(k){return ss[k].part==='a';}).map(function(k){return [k,ss[k]];});
+  var sSubs = Object.keys(ss).filter(function(k){return ss[k].part==='b';}).map(function(k){return [k,ss[k]];});
+  rb('conf-breakdown', cSubs, '#1a3357');
+  rb('soc-breakdown',  sSubs, '#1a7a6e');
+}
+
+function downloadPDF() {
+  var name = document.getElementById('result-name').textContent || 'Your Results';
+  document.title = 'Open-Source Charisma \u2014 ' + name;
+  window.print();
+}
+function retake() {
+  answers = {};
+  showScreen('screen-intro');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Book — Open-Source Charisma by James G Harvey</title>
+<meta name="description" content="Open-Source Charisma: 125 Small Ways to Boost Your Charisma, Confidence, and Image. Available on Amazon. By James G Harvey.">
+<meta property="og:title" content="Open-Source Charisma — The Book">
+<meta property="og:description" content="125 small, high-impact actions organised around your charisma type. Paperback and Kindle on Amazon.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3S96VP3093"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3S96VP3093');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0e1117;--navy:#0f1f38;--gold:#c9a84c;--gold-light:#f5efd8;--teal:#1a7a6e;--cream:#faf8f3;--white:#fff;--muted:#6b7280;--border:#e2ddd5;--serif:'Cormorant Garamond',serif;--sans:'Outfit',sans-serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,31,56,0.97);backdrop-filter:blur(8px)}
+.nav-brand{font-family:var(--serif);font-size:17px;color:var(--white);font-weight:600;text-decoration:none}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;letter-spacing:0.5px;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--navy)!important;padding:8px 20px;border-radius:2px;font-weight:500}
+.nav-mobile-btn{display:none;background:none;border:none;color:var(--white);font-size:22px;cursor:pointer}
+
+.page-hero{background:var(--navy);padding:140px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.page-hero::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.page-hero-kicker{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:20px;display:block}
+.page-hero h1{font-family:var(--serif);font-size:clamp(44px,7vw,80px);font-weight:600;color:var(--white);line-height:1.1;max-width:800px;margin:0 auto 16px}
+.page-hero h1 em{color:var(--gold);font-style:italic}
+.page-hero-sub{font-size:17px;color:rgba(255,255,255,0.5);font-style:italic;font-family:var(--serif)}
+
+.section{padding:96px 24px}
+.section-inner{max-width:1080px;margin:0 auto}
+.section-kicker{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:16px;display:block}
+.section-title{font-family:var(--serif);font-size:clamp(32px,4vw,52px);font-weight:600;color:var(--navy);line-height:1.1;margin-bottom:24px}
+.section-title em{font-style:italic;color:var(--teal)}
+
+.book-main{display:grid;grid-template-columns:320px 1fr;gap:80px;align-items:start}
+.book-cover{background:var(--navy);border-radius:4px;padding:48px 36px;text-align:center;position:sticky;top:80px;box-shadow:16px 16px 48px rgba(15,31,56,0.2),-4px -4px 0 var(--gold)}
+.book-cover-kicker{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:28px;font-weight:500}
+.book-cover-title{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--white);line-height:1.15;margin-bottom:10px}
+.book-cover-title em{color:var(--gold);font-style:italic}
+.book-cover-sub{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:28px}
+.book-cover-rule{width:40px;height:1px;background:var(--gold);margin:0 auto 24px}
+.book-cover-author{font-family:var(--serif);font-size:15px;color:rgba(255,255,255,0.55);font-style:italic;margin-bottom:32px}
+.book-cover-isbn{font-size:11px;color:rgba(255,255,255,0.25);margin-bottom:28px}
+.btn-amazon-large{display:block;background:var(--gold);color:var(--navy);font-family:var(--sans);font-size:14px;font-weight:600;padding:16px;border-radius:2px;text-decoration:none;text-align:center;transition:background 0.2s;margin-bottom:12px}
+.btn-amazon-large:hover{background:#d4b060}
+.book-price{font-size:12px;color:rgba(255,255,255,0.3);text-align:center}
+
+.book-body p{font-size:17px;color:#374151;line-height:1.9;margin-bottom:1.5em;font-weight:300}
+.book-body p em{font-family:var(--serif);font-style:italic;color:var(--navy);font-size:18px}
+.book-body h3{font-family:var(--serif);font-size:26px;color:var(--navy);margin:2em 0 0.75em;font-weight:600}
+
+.types-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:40px 0}
+.type-card{border:1px solid var(--border);border-radius:3px;padding:24px;background:var(--white)}
+.type-card-name{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.type-card-axes{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.type-card-desc{font-size:14px;color:var(--muted);line-height:1.65}
+
+.pull-quote{border-left:3px solid var(--gold);padding:4px 0 4px 28px;margin:2.5em 0}
+.pull-quote p{font-family:var(--serif);font-size:22px;line-height:1.5;color:var(--navy);font-style:italic;margin:0}
+
+.book-cta-box{background:var(--navy);border-radius:4px;padding:48px;text-align:center;margin-top:48px}
+.book-cta-box h3{font-family:var(--serif);font-size:28px;color:var(--white);margin-bottom:12px;font-weight:600}
+.book-cta-box p{font-size:15px;color:rgba(255,255,255,0.55);margin-bottom:28px;max-width:400px;margin-left:auto;margin-right:auto;font-weight:300}
+.btn-amazon-cta{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--navy);font-family:var(--sans);font-size:14px;font-weight:600;padding:16px 40px;border-radius:2px;text-decoration:none;transition:background 0.2s;margin-bottom:16px}
+.btn-amazon-cta:hover{background:#d4b060}
+.btn-osci-cta{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,0.6);font-family:var(--sans);font-size:14px;padding:16px 24px;border:1px solid rgba(255,255,255,0.2);border-radius:2px;text-decoration:none;transition:all 0.2s;margin-left:16px}
+.btn-osci-cta:hover{border-color:var(--gold);color:var(--gold)}
+
+footer{background:var(--navy);padding:48px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.footer-brand{font-family:var(--serif);font-size:16px;color:rgba(255,255,255,0.6)}
+.footer-links{display:flex;gap:24px;list-style:none;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.25);width:100%}
+
+@media(max-width:768px){
+  nav{padding:0 20px}.nav-links{display:none}.nav-mobile-btn{display:block}
+  .book-main{grid-template-columns:1fr}.book-cover{position:static}
+  .types-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:flex-start;padding:36px 24px}
+  .book-cta-box .btn-osci-cta{margin-left:0;margin-top:12px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-brand" href="index.html">Open-Source Charisma</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="book.html" class="active">The Book</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a class="nav-cta" href="assessment.html">Take the OSCI</a></li>
+  </ul>
+  <button class="nav-mobile-btn" onclick="toggleMobileNav()">&#9776;</button>
+</nav>
+
+<div class="page-hero">
+  <span class="page-hero-kicker">The Book</span>
+  <h1>Open-Source<br><em>Charisma</em></h1>
+  <p class="page-hero-sub">125 Small Ways to Boost Your Charisma, Confidence, and Image</p>
+</div>
+
+<section class="section" style="background:var(--white)">
+  <div class="section-inner">
+    <div class="book-main">
+      <div class="book-cover">
+        <div class="book-cover-kicker">James G Harvey</div>
+        <div class="book-cover-title">Open-Source<br><em>Charisma</em></div>
+        <div class="book-cover-sub">125 Small Ways to Boost Your Charisma, Confidence, and Image</div>
+        <div class="book-cover-rule"></div>
+        <div class="book-cover-author">James G Harvey</div>
+        <div class="book-cover-isbn">ISBN 9798333891679</div>
+        <a class="btn-amazon-large" href="https://www.amazon.com/Open-Source-Charisma-small-Confidence/dp/B0DB683KZ6" target="_blank" rel="noopener">&#9733;&nbsp; Buy on Amazon</a>
+        <p class="book-price">Paperback from $9.99 &middot; Kindle available</p>
+      </div>
+      <div class="book-body">
+        <span class="section-kicker">About the Book</span>
+        <h2 class="section-title">Most professionals are more impressive<br><em>than they appear</em></h2>
+
+        <p>The gap isn&rsquo;t competence &mdash; it&rsquo;s charisma. And charisma, despite what most people assume, is not a personality trait you either have or lack. It is a measurable skill with identifiable components that can be learned, practised, and made your own.</p>
+
+        <div class="pull-quote"><p>&ldquo;Charisma isn&rsquo;t a gift. It&rsquo;s a skill. And like any skill, it can be learned, refined, and made your own.&rdquo;</p></div>
+
+        <p>Open-Source Charisma is built around a simple but powerful model: the Charisma Quadrant. It maps every communicator across two dimensions &mdash; Confidence and Social Skills &mdash; and places them in one of four types.</p>
+
+        <h3>The Four Types</h3>
+        <div class="types-grid">
+          <div class="type-card">
+            <div class="type-card-axes">Higher Confidence &middot; Lower Social Skills</div>
+            <div class="type-card-name">The Occasionally Overconfident</div>
+            <p class="type-card-desc">Sharp and capable. The missing piece is connection. Add empathy and the confidence lands very differently.</p>
+          </div>
+          <div class="type-card">
+            <div class="type-card-axes">Higher Confidence &middot; Higher Social Skills</div>
+            <div class="type-card-name">The Courteous Charismatic</div>
+            <p class="type-card-desc">Competent and connected. The challenge is keeping it real as the stakes rise.</p>
+          </div>
+          <div class="type-card">
+            <div class="type-card-axes">Lower Confidence &middot; Lower Social Skills</div>
+            <div class="type-card-name">The Unfortunately Invisible</div>
+            <p class="type-card-desc">Talented but overlooked. The gap isn&rsquo;t ability &mdash; it&rsquo;s visibility.</p>
+          </div>
+          <div class="type-card">
+            <div class="type-card-axes">Lower Confidence &middot; Higher Social Skills</div>
+            <div class="type-card-name">The Unknowingly Influential</div>
+            <p class="type-card-desc">Warm and well-liked. The only thing underselling you is you.</p>
+          </div>
+        </div>
+
+        <p>The model works because it is honest. Most charisma books tell you to be more present, more engaging, more likeable. This one shows you exactly where you are, why, and what to do about it &mdash; in practical, specific steps drawn from thirty years of working with senior leaders, sales teams, and client-facing professionals at FTSE 100 companies.</p>
+
+        <p>The result is 125 small, high-impact actions organised around your type. Not a transformation programme. Not a personality overhaul.</p>
+
+        <p><em>A map, and the moves that matter most from where you are standing right now.</em></p>
+
+        <div class="book-cta-box">
+          <h3>Get the book</h3>
+          <p>Available in paperback and Kindle on Amazon. Start reading today.</p>
+          <div>
+            <a class="btn-amazon-cta" href="https://www.amazon.com/Open-Source-Charisma-small-Confidence/dp/B0DB683KZ6" target="_blank" rel="noopener">&#9733;&nbsp; Buy on Amazon</a>
+            <a class="btn-osci-cta" href="assessment.html">Take the free assessment &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">Open-Source Charisma &mdash; James G Harvey</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="book.html">The Book</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://www.amazon.com/Open-Source-Charisma-small-Confidence/dp/B0DB683KZ6" target="_blank">Amazon</a></li>
+  </ul>
+  <p class="footer-copy">&copy; 2026 James G Harvey / Allcow Trading Co LTD. All rights reserved.</p>
+</footer>
+<script>
+function toggleMobileNav(){var l=document.querySelector('.nav-links');l.style.display=l.style.display==='flex'?'none':'flex';l.style.flexDirection='column';l.style.position='absolute';l.style.top='60px';l.style.left='0';l.style.right='0';l.style.background='rgba(15,31,56,0.98)';l.style.padding='16px 24px 24px';l.style.gap='16px';}
+</script>
+</body>
+</html>
