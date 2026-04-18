@@ -1,4 +1,8 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "functions": {
+    "api/create-checkout.js": { "maxDuration": 10 },
+    "api/generate-report.js": { "maxDuration": 30, "memory": 512 }
+  }
 }
