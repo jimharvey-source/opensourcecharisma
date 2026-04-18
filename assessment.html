@@ -491,6 +491,7 @@ function renderQuestions() {
 }
 
 function startAssessment() {
+  if(typeof gtag!=='undefined'){gtag('event','assessment_start',{'event_category':'OSCI','event_label':'Part A started'});}
   showScreen('screen-questions');
   renderQuestions();
   updateProgress();
@@ -602,6 +603,8 @@ function calculateAndRender() {
   else if (cT>60 && sT<=60) quad = Q.arrogant;
   else if (cT<=60 && sT>60) quad = Q.influential;
   else                       quad = Q.invisible;
+
+  if(typeof gtag!=='undefined'){gtag('event','assessment_complete',{'event_category':'OSCI','event_label':quad.key});}
 
   document.getElementById('result-name').textContent = quad.name;
   document.getElementById('result-tag').textContent  = quad.tag;
