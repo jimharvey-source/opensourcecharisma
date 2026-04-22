@@ -29,7 +29,6 @@ module.exports = async function handler(req, res) {
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: { scores: scoresEncoded },
     };
 
     if (email) sessionParams.customer_email = email;
